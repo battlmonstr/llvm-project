@@ -481,7 +481,7 @@ private:
     // FIXME: If an option to allow short exception handling clauses on a single
     // line is added, change this to not return for @try and friends.
     if (Style.Language != FormatStyle::LK_Java &&
-        Line.First->isOneOf(tok::at, tok::minus, tok::plus))
+        Line.First->is(tok::at))
       return 0;
 
     // Check that the current line allows merging. This depends on whether we
