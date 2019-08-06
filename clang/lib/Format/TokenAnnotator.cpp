@@ -2427,6 +2427,7 @@ bool TokenAnnotator::spaceRequiredBetween(const AnnotatedLine &Line,
   if (Left.is(tok::at) &&
       Right.isOneOf(tok::identifier, tok::string_literal, tok::char_constant,
                     tok::numeric_constant, tok::l_paren, tok::l_brace,
+                    tok::l_square,
                     tok::kw_true, tok::kw_false))
     return false;
   if (Left.is(tok::colon))
