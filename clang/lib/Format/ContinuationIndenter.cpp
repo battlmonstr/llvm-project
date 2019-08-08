@@ -767,6 +767,7 @@ unsigned ContinuationIndenter::addTokenOnNewLine(LineState &State,
   // is common and should be formatted like a free-standing function. The same
   // goes for wrapping before the lambda return type arrow.
   if (!Current.is(TT_LambdaArrow) &&
+      (Style.Language != FormatStyle::LK_ObjC) &&
       (Style.Language != FormatStyle::LK_JavaScript ||
        Current.NestingLevel != 0 || !PreviousNonComment ||
        !PreviousNonComment->is(tok::equal) ||
