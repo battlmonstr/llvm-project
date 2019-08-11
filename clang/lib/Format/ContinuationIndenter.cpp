@@ -387,6 +387,11 @@ bool ContinuationIndenter::mustBreak(const LineState &State) {
       State.Stack.back().ObjCSelectorNameFound &&
       State.Stack.back().BreakBeforeParameter)
     return true;
+  if (Current.is(tok::l_brace) && Previous.is(TT_TrailingAnnotation) &&
+      State.ContainsLineBreak &&
+      State.Stack.back().ObjCSelectorNameFound &&
+      State.Line->startsWith(TT_ObjCMethodSpecifier))
+    return true;
   
   if (Previous.is(tok::r_paren) && Current.is(tok::l_brace) &&
       State.ContainsLineBreak &&
