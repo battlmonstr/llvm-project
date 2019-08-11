@@ -257,6 +257,7 @@ LineState ContinuationIndenter::getInitialState(unsigned FirstIndent,
                                    /*NoLineBreak=*/false));
   State.LineContainsContinuedForLoopSection = false;
   State.NoContinuation = false;
+  State.ContainsLineBreak = false;
   State.StartOfStringLiteral = 0;
   State.StartOfLineLevel = 0;
   State.LowestLevelOnLine = 0;
@@ -385,6 +386,11 @@ bool ContinuationIndenter::mustBreak(const LineState &State) {
   if (Current.is(TT_SelectorName) && !Previous.is(tok::at) &&
       State.Stack.back().ObjCSelectorNameFound &&
       State.Stack.back().BreakBeforeParameter)
+    return true;
+  
+  if (Previous.is(tok::r_paren) && Current.is(tok::l_brace) &&
+      State.ContainsLineBreak &&
+      State.Line->First->isOneOf(tok::kw_if, tok::kw_while))
     return true;
 
   unsigned NewLineColumn = getNewLineColumn(State);
@@ -742,6 +748,7 @@ unsigned ContinuationIndenter::addTokenOnNewLine(LineState &State,
   if (!State.Stack.back().ContainsLineBreak)
     Penalty += 15;
   State.Stack.back().ContainsLineBreak = true;
+  State.ContainsLineBreak = true;
 
   Penalty += State.NextToken->SplitPenalty;
 

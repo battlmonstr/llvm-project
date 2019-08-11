@@ -387,6 +387,9 @@ struct LineState {
   /// \c true if \p NextToken should not continue this line.
   bool NoContinuation;
 
+  /// \c true if this line already contains a line-break.
+  bool ContainsLineBreak;
+  
   /// The \c NestingLevel at the start of this line.
   unsigned StartOfLineLevel;
 
@@ -435,6 +438,8 @@ struct LineState {
       return LineContainsContinuedForLoopSection;
     if (NoContinuation != Other.NoContinuation)
       return NoContinuation;
+    if (ContainsLineBreak != Other.ContainsLineBreak)
+      return ContainsLineBreak;
     if (StartOfLineLevel != Other.StartOfLineLevel)
       return StartOfLineLevel < Other.StartOfLineLevel;
     if (LowestLevelOnLine != Other.LowestLevelOnLine)
