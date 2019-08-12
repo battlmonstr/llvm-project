@@ -1705,7 +1705,8 @@ void UnwrappedLineParser::parseIfThenElse() {
   if (FormatTok->Tok.is(tok::l_brace)) {
     CompoundStatementIndenter Indenter(this, Style, Line->Level);
     parseBlock(/*MustBeDeclaration=*/false);
-    if (Style.BraceWrapping.BeforeElse)
+    if (Style.BraceWrapping.BeforeElse ||
+        (FormatTok->Tok.is(tok::kw_else) && FormatTok->NewlinesBefore > 0))
       addUnwrappedLine();
     else
       NeedsUnwrappedLine = true;
