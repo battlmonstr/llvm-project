@@ -1758,6 +1758,53 @@ static void sortCppIncludes(const FormatStyle &Style,
 
 namespace {
 
+static StringRef::const_iterator
+findEmptyLineEnd(StringRef::const_iterator Start, StringRef::const_iterator End) {
+  if (Start == End)
+    return End;
+  if (*Start == '\n')
+    Start++;
+  else
+    return End;
+  
+  if (Start == End)
+    return End;
+  if (*Start == '\n')
+    return End;
+  while (Start != End && *Start != '\n')
+    Start++;
+  
+  return Start;
+}
+  
+static llvm::Expected<tooling::Replacements>
+filterOutEmptyLineReplacements(StringRef Code, const tooling::Replacements& InReplacements) {
+  tooling::Replacements OutReplacements;
+  for (const tooling::Replacement &Replacement : InReplacements) {
+    StringRef ReplacementText = Replacement.getReplacementText();
+    
+    if (ReplacementText.startswith("\n\n")) {
+      auto emptyLineEnd = findEmptyLineEnd(Code.begin() + Replacement.getOffset(), Code.end());
+      if (emptyLineEnd != Code.end()) {
+        std::string ReplacementTextStr = Code.slice(Replacement.getOffset(), emptyLineEnd - Code.begin()).str() +
+          ReplacementText.substr(1).str();
+        ReplacementText = ReplacementTextStr;
+      }
+    }
+
+    tooling::Replacement NewReplacement(Replacement.getFilePath(),
+                                        Replacement.getOffset(),
+                                        Replacement.getLength(),
+                                        ReplacementText);
+    
+    llvm::Error Err = OutReplacements.add(NewReplacement);
+    if (Err) {
+      return llvm::Expected<tooling::Replacements>(std::move(Err));
+    }
+  }
+  return OutReplacements;
+}
+  
 const char CppIncludeRegexPattern[] =
     R"(^[\t\ ]*#[\t\ ]*(import|include)[^"<]*(["<][^">]*[">]))";
 
@@ -2195,6 +2242,13 @@ reformat(const FormatStyle &Style, StringRef Code,
   unsigned Penalty = 0;
   for (size_t I = 0, E = Passes.size(); I < E; ++I) {
     std::pair<tooling::Replacements, unsigned> PassFixes = Passes[I](*Env);
+
+    auto replacements = filterOutEmptyLineReplacements(CurrentCode ? StringRef(*CurrentCode) : Code,
+                                                       PassFixes.first);
+    if (replacements) {
+      PassFixes.first = replacements.get();
+    }
+
     auto NewCode = applyAllReplacements(
         CurrentCode ? StringRef(*CurrentCode) : Code, PassFixes.first);
     if (NewCode) {
