@@ -1369,8 +1369,7 @@ void ContinuationIndenter::moveStatePastScopeOpener(LineState &State,
         // be a line break within this call.
         for (const FormatToken *Tok = &Current;
              Tok && Tok != Current.MatchingParen; Tok = Tok->Next) {
-          if (Tok->MustBreakBefore ||
-              (Tok->CanBreakBefore && Tok->NewlinesBefore > 0)) {
+          if (Tok->MustBreakBefore) {
             BreakBeforeParameter = true;
             break;
           }
