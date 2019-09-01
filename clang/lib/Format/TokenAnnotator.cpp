@@ -2962,6 +2962,11 @@ bool TokenAnnotator::mustBreakBefore(const AnnotatedLine &Line,
   if (Left.is(TT_ObjCBlockLBrace) && !Style.AllowShortBlocksOnASingleLine)
     return true;
 
+  if (Line.Type == LT_ObjCDecl &&
+      Right.is(tok::less) &&
+      Left.isOneOf(tok::identifier, tok::r_paren, tok::colon))
+    return true;
+
   if ((Style.Language == FormatStyle::LK_Java ||
        Style.Language == FormatStyle::LK_JavaScript) &&
       Left.is(TT_LeadingJavaAnnotation) &&
