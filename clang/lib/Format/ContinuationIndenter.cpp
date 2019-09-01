@@ -715,9 +715,6 @@ void ContinuationIndenter::addTokenOnCurrentLine(LineState &State, bool DryRun,
     // unary operators and the colons of constructor initializers.
     if (Style.BreakBeforeBinaryOperators == FormatStyle::BOS_None)
       State.Stack.back().LastSpace = State.Column;
-  } else if (Previous.is(TT_InheritanceColon)) {
-    State.Stack.back().Indent = State.Column;
-    State.Stack.back().LastSpace = State.Column;
   } else if (Previous.opensScope()) {
     // If a function has a trailing call, indent all parameters from the
     // opening parenthesis. This avoids confusing indents like:
