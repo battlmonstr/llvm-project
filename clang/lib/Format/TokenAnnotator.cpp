@@ -103,6 +103,8 @@ private:
             (Style.Language == FormatStyle::LK_Proto && Left->Previous &&
              Left->Previous->isOneOf(TT_SelectorName, TT_DictLiteral)))
           CurrentToken->Type = TT_DictLiteral;
+        else if (Left->is(TT_ObjCProtocolListLAngleBracket))
+          CurrentToken->Type = TT_ObjCProtocolListRAngleBracket;
         else
           CurrentToken->Type = TT_TemplateCloser;
         next();
@@ -824,7 +826,10 @@ private:
         return false;
       break;
     case tok::less:
+      if (Line.startsWith(TT_ObjCDecl))
+        Tok->Type = TT_ObjCProtocolListLAngleBracket;
       if (parseAngle()) {
+        if (Tok->isNot(TT_ObjCProtocolListLAngleBracket))
         Tok->Type = TT_TemplateOpener;
         // In TT_Proto, we must distignuish between:
         //   map<key, value>
@@ -904,6 +909,8 @@ private:
         Tok->Type = TT_CtorInitializerComma;
       else if (Contexts.back().InInheritanceList)
         Tok->Type = TT_InheritanceComma;
+      else if (Contexts.back().InObjCProtocolList)
+        Tok->Type = TT_ObjCProtocolListComma;
       else if (Contexts.back().FirstStartOfName &&
                (Contexts.size() == 1 || Line.startsWith(tok::kw_for))) {
         Contexts.back().FirstStartOfName->PartOfMultiVariableDeclStmt = true;
@@ -1179,6 +1186,7 @@ private:
     bool InTemplateArgument = false;
     bool InCtorInitializer = false;
     bool InInheritanceList = false;
+    bool InObjCProtocolList = false;
     bool CaretFound = false;
     bool IsForEachMacro = false;
     bool InCpp11AttributeSpecifier = false;
@@ -1244,6 +1252,8 @@ private:
       Contexts.back().InCtorInitializer = true;
     } else if (Current.Previous && Current.Previous->is(TT_InheritanceColon)) {
       Contexts.back().InInheritanceList = true;
+    } else if (Current.Previous && Current.Previous->is(TT_ObjCProtocolListLAngleBracket)) {
+      Contexts.back().InObjCProtocolList = true;
     } else if (Current.isOneOf(tok::r_paren, tok::greater, tok::comma)) {
       for (FormatToken *Previous = Current.Previous;
            Previous && Previous->isOneOf(tok::star, tok::amp);
@@ -2938,6 +2948,8 @@ bool TokenAnnotator::mustBreakBefore(const AnnotatedLine &Line,
   if (Style.BreakInheritanceList == FormatStyle::BILS_BeforeComma &&
       Right.is(TT_InheritanceComma))
     return true;
+  if (Right.is(TT_ObjCProtocolListComma))
+    return true;
   if (Right.is(tok::string_literal) && Right.TokenText.startswith("R\""))
     // Multiline raw string literals are special wrt. line breaks. The author
     // has made a deliberate choice and might have aligned the contents of the
@@ -3327,6 +3339,8 @@ bool TokenAnnotator::canBreakBefore(const AnnotatedLine &Line,
   if (Right.is(TT_InheritanceComma) &&
       Style.BreakInheritanceList == FormatStyle::BILS_BeforeComma)
     return true;
+  if (Left.is(TT_ObjCProtocolListComma))
+    return false;
   if ((Left.is(tok::greater) && Right.is(tok::greater)) ||
       (Left.is(tok::less) && Right.is(tok::less)))
     return false;

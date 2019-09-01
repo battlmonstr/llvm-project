@@ -126,6 +126,8 @@ static bool startsNextParameter(const FormatToken &Current,
     return true;
   if (Style.Language == FormatStyle::LK_Proto && Current.is(TT_SelectorName))
     return true;
+  if (Previous.is(TT_ObjCProtocolListComma))
+    return false;
   return Previous.is(tok::comma) && !Current.isTrailingComment() &&
          ((Previous.isNot(TT_CtorInitializerComma) ||
            Style.BreakConstructorInitializers !=

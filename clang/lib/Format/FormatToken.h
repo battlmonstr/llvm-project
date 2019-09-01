@@ -77,6 +77,9 @@ namespace format {
   TYPE(ObjCMethodExpr)                                                         \
   TYPE(ObjCMethodSpecifier)                                                    \
   TYPE(ObjCProperty)                                                           \
+  TYPE(ObjCProtocolListComma)                                                  \
+  TYPE(ObjCProtocolListLAngleBracket)                                          \
+  TYPE(ObjCProtocolListRAngleBracket)                                          \
   TYPE(ObjCStringLiteral)                                                      \
   TYPE(OverloadedOperator)                                                     \
   TYPE(OverloadedOperatorLParen)                                               \
