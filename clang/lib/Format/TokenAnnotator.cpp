@@ -2974,9 +2974,8 @@ bool TokenAnnotator::mustBreakBefore(const AnnotatedLine &Line,
   if (Left.is(TT_ObjCBlockLBrace) && !Style.AllowShortBlocksOnASingleLine)
     return true;
 
-  if (Line.Type == LT_ObjCDecl &&
-      Right.is(tok::less) &&
-      Left.isOneOf(tok::identifier, tok::r_paren, tok::colon))
+  if (Right.is(TT_ObjCProtocolListLAngleBracket) &&
+      Right.Next && Right.Next->Next && Right.Next->Next->is(TT_ObjCProtocolListComma))
     return true;
 
   if ((Style.Language == FormatStyle::LK_Java ||

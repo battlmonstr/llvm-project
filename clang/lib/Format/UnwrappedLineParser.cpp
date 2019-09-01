@@ -2182,6 +2182,8 @@ void UnwrappedLineParser::parseObjCMethod() {
 
 void UnwrappedLineParser::parseObjCProtocolList() {
   assert(FormatTok->Tok.is(tok::less) && "'<' expected.");
+  if (FormatTok->NewlinesBefore > 0)
+    FormatTok->MustBreakBefore = true;
   do {
     nextToken();
     // Early exit in case someone forgot a close angle.
