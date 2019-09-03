@@ -1234,7 +1234,7 @@ void ContinuationIndenter::moveStatePastFakeLParens(LineState &State,
         (!Previous || Previous->isNot(tok::kw_return) ||
          (Style.Language != FormatStyle::LK_Java && *I > 0)) &&
         (Style.AlignAfterOpenBracket != FormatStyle::BAS_DontAlign ||
-         *I != prec::Comma || Current.NestingLevel == 0))
+         Current.NestingLevel == 0))
       NewParenState.Indent =
           std::max(std::max(State.Column, NewParenState.Indent),
                    State.Stack.back().LastSpace);
