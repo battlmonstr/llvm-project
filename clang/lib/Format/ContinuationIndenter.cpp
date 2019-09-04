@@ -963,11 +963,6 @@ unsigned ContinuationIndenter::getNewLineColumn(const LineState &State) {
          Style.Language == FormatStyle::LK_TextProto) &&
         Current.Next->isOneOf(tok::less, tok::l_brace))))
     return State.Stack.back().Indent;
-  if (NextNonComment->is(TT_ObjCStringLiteral) &&
-      State.StartOfStringLiteral != 0)
-    return State.StartOfStringLiteral - 1;
-  if (NextNonComment->isStringLiteral() && State.StartOfStringLiteral != 0)
-    return State.StartOfStringLiteral;
   if (NextNonComment->is(tok::lessless) &&
       State.Stack.back().FirstLessLess != 0)
     return State.Stack.back().FirstLessLess;
