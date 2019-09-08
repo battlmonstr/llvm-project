@@ -394,6 +394,12 @@ bool ContinuationIndenter::mustBreak(const LineState &State) {
       State.Stack.back().ObjCSelectorNameFound &&
       State.Line->startsWith(TT_ObjCMethodSpecifier))
     return true;
+  if (Current.is(tok::l_brace) &&
+      Current.BlockKind == BK_Block &&
+      State.ContainsLineBreak &&
+      State.Stack.back().ObjCSelectorNameFound &&
+      State.Line->startsWith(TT_ObjCMethodExpr))
+    return true;
   
   if (Previous.is(tok::r_paren) && Current.is(tok::l_brace) &&
       State.ContainsLineBreak &&
@@ -927,6 +933,12 @@ unsigned ContinuationIndenter::getNewLineColumn(const LineState &State) {
     return std::max(State.Stack.back().LastSpace,
                     State.Stack.back().Indent + Style.ContinuationIndentWidth);
 
+  if (NextNonComment->is(tok::l_brace) &&
+      NextNonComment->BlockKind == BK_Block &&
+      State.ContainsLineBreak &&
+      State.Stack.back().ObjCSelectorNameFound &&
+      State.Line->startsWith(TT_ObjCMethodExpr))
+    return State.FirstIndent;
   if (NextNonComment->is(tok::l_brace) && NextNonComment->BlockKind == BK_Block)
     return Current.NestingLevel == 0 ? State.FirstIndent
                                      : State.Stack.back().Indent;
