@@ -2751,7 +2751,7 @@ bool TokenAnnotator::spaceRequiredBefore(const AnnotatedLine &Line,
   if (Right.is(tok::comma))
     return false;
   if (Right.is(TT_ObjCBlockLParen))
-    return true;
+    return !(Left.is(TT_PointerOrReference) && Style.PointerAlignment == FormatStyle::PAS_Right);
   if (Right.is(TT_CtorInitializerColon))
     return Style.SpaceBeforeCtorInitializerColon;
   if (Right.is(TT_InheritanceColon) && !Style.SpaceBeforeInheritanceColon)
