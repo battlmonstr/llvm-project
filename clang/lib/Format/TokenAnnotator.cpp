@@ -2601,6 +2601,7 @@ bool TokenAnnotator::spaceRequiredBefore(const AnnotatedLine &Line,
     if (Left.is(tok::kw_operator))
       return Right.is(tok::coloncolon);
     if (Right.is(tok::l_brace) && Right.BlockKind == BK_BracedInit &&
+        !Left.is(tok::at) &&
         !Left.opensScope() && Style.SpaceBeforeCpp11BracedList)
       return true;
   } else if (Style.Language == FormatStyle::LK_Proto ||
