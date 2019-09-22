@@ -2560,6 +2560,8 @@ bool TokenAnnotator::spaceRequiredBetween(const AnnotatedLine &Line,
   if (Right.is(TT_UnaryOperator))
     return !Left.isOneOf(tok::l_paren, tok::l_square, tok::at) &&
            (Left.isNot(tok::colon) || Left.isNot(TT_ObjCMethodExpr));
+  if (Right.is(TT_ObjCBlockLBrace) && Left.is(tok::identifier))
+    return false;
   if ((Left.isOneOf(tok::identifier, tok::greater, tok::r_square,
                     tok::r_paren) ||
        Left.isSimpleTypeSpecifier()) &&
