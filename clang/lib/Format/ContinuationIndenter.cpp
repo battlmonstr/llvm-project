@@ -398,7 +398,7 @@ bool ContinuationIndenter::mustBreak(const LineState &State) {
       Current.BlockKind == BK_Block &&
       State.ContainsLineBreak &&
       State.Stack.back().ObjCSelectorNameFound &&
-      State.Line->startsWith(TT_ObjCMethodExpr))
+      State.Stack.size() >= 3 && (State.Stack.rbegin() + 2)->Tok && (State.Stack.rbegin() + 2)->Tok->is(TT_ObjCMethodExpr))
     return true;
   
   if (Previous.is(tok::r_paren) && Current.is(tok::l_brace) &&
@@ -940,7 +940,7 @@ unsigned ContinuationIndenter::getNewLineColumn(const LineState &State) {
       NextNonComment->BlockKind == BK_Block &&
       State.ContainsLineBreak &&
       State.Stack.back().ObjCSelectorNameFound &&
-      State.Line->startsWith(TT_ObjCMethodExpr))
+      State.Stack.size() >= 3 && (State.Stack.rbegin() + 2)->Tok && (State.Stack.rbegin() + 2)->Tok->is(TT_ObjCMethodExpr))
     return State.FirstIndent;
   if (NextNonComment->is(tok::l_brace) && NextNonComment->BlockKind == BK_Block)
     return Current.NestingLevel == 0 ? State.FirstIndent
