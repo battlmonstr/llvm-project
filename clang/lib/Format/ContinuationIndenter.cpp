@@ -403,7 +403,10 @@ bool ContinuationIndenter::mustBreak(const LineState &State) {
   
   if (Previous.is(tok::r_paren) && Current.is(tok::l_brace) &&
       State.ContainsLineBreak &&
-      State.Line->First->isOneOf(tok::kw_if, tok::kw_while))
+      State.Line->First->Next && State.Line->First->Next->Next &&
+      (State.Line->First->isOneOf(tok::kw_if, tok::kw_while) ||
+       State.Line->First->startsSequence(tok::kw_else, tok::kw_if) ||
+       State.Line->First->startsSequence(tok::r_brace, tok::kw_else, tok::kw_if)))
     return true;
 
   unsigned NewLineColumn = getNewLineColumn(State);
