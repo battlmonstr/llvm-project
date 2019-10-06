@@ -1373,16 +1373,6 @@ void ContinuationIndenter::moveStatePastScopeOpener(LineState &State,
         if (getLengthToMatchingParen(Current, State.Stack) + State.Column >
             getColumnLimit(State))
           BreakBeforeParameter = true;
-      } else {
-        // For ColumnLimit = 0, we have to figure out whether there is or has to
-        // be a line break within this call.
-        for (const FormatToken *Tok = &Current;
-             Tok && Tok != Current.MatchingParen; Tok = Tok->Next) {
-          if (Tok->MustBreakBefore) {
-            BreakBeforeParameter = true;
-            break;
-          }
-        }
       }
     }
 
