@@ -397,6 +397,7 @@ bool ContinuationIndenter::mustBreak(const LineState &State) {
   if (Current.is(tok::l_brace) &&
       Current.BlockKind == BK_Block &&
       State.ContainsLineBreak &&
+      Current.MatchingParen && Current.MatchingParen->NewlinesBefore &&
       State.Stack.back().ObjCSelectorNameFound &&
       State.Stack.size() >= 3 && (State.Stack.rbegin() + 2)->Tok && (State.Stack.rbegin() + 2)->Tok->is(TT_ObjCMethodExpr))
     return true;
