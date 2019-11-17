@@ -409,6 +409,9 @@ bool ContinuationIndenter::mustBreak(const LineState &State) {
        State.Line->First->startsSequence(tok::r_brace, tok::kw_else, tok::kw_if)))
     return true;
 
+  if (Current.is(TT_FunctionLBrace) && State.ContainsLineBreak)
+    return true;
+
   unsigned NewLineColumn = getNewLineColumn(State);
   if (Current.isMemberAccess() && Style.ColumnLimit != 0 &&
       State.Column + getLengthToNextOperator(Current) > Style.ColumnLimit &&
