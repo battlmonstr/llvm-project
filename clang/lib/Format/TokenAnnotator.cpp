@@ -2487,6 +2487,7 @@ bool TokenAnnotator::spaceRequiredBetween(const AnnotatedLine &Line,
            (Right.isOneOf(Keywords.kw_override, Keywords.kw_final) &&
             !Right.is(TT_StartOfName)) ||
            Right.isOneOf(tok::kw_const, tok::kw__Nonnull, tok::kw__Nullable, tok::kw__Null_unspecified) ||
+           Right.TokenText == "__autoreleasing" ||
            (!Right.isOneOf(TT_PointerOrReference, TT_ArraySubscriptLSquare,
                            tok::l_paren) &&
             (Style.PointerAlignment != FormatStyle::PAS_Right &&
