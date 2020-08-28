@@ -618,7 +618,7 @@ void ContinuationIndenter::addTokenOnCurrentLine(LineState &State, bool DryRun,
   if (Current.is(TT_SelectorName) &&
       !State.Stack.back().ObjCSelectorNameFound) {
     unsigned FirstColonPos = State.Column + Spaces + Current.ColumnWidth;
-    if (Current.LongestObjCSelectorName == 0)
+    if (false)
       State.Stack.back().AlignColons = false;
     else
       State.Stack.back().ColonPos = FirstColonPos;
