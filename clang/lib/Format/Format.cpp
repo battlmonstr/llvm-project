@@ -1788,16 +1788,20 @@ filterOutEmptyLineReplacements(StringRef Code, const tooling::Replacements& InRe
       if (emptyLineEnd != Code.end()) {
         std::string ReplacementTextStr = Code.slice(Replacement.getOffset(), emptyLineEnd - Code.begin()).str() +
           ReplacementText.substr(1).str();
-        ReplacementText = ReplacementTextStr;
+
+        tooling::Replacement NewReplacement(Replacement.getFilePath(),
+                                            Replacement.getOffset(),
+                                            Replacement.getLength(),
+                                            ReplacementTextStr);
+        llvm::Error Err = OutReplacements.add(NewReplacement);
+        if (Err) {
+          return llvm::Expected<tooling::Replacements>(std::move(Err));
+        }
+        continue;
       }
     }
 
-    tooling::Replacement NewReplacement(Replacement.getFilePath(),
-                                        Replacement.getOffset(),
-                                        Replacement.getLength(),
-                                        ReplacementText);
-    
-    llvm::Error Err = OutReplacements.add(NewReplacement);
+    llvm::Error Err = OutReplacements.add(Replacement);
     if (Err) {
       return llvm::Expected<tooling::Replacements>(std::move(Err));
     }
