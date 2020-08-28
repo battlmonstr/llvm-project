@@ -947,6 +947,9 @@ unsigned ContinuationIndenter::getNewLineColumn(const LineState &State) {
         (Style.Language == FormatStyle::LK_Proto ||
          Style.Language == FormatStyle::LK_TextProto))) &&
       State.Stack.size() > 1) {
+    if (Current.is(tok::r_brace) && Current.MatchingParen &&
+        Current.MatchingParen->is(TT_DictLiteral))
+      return State.Stack[State.Stack.size() - 2].LastSpace;
     if (Current.closesBlockOrBlockTypeList(Style))
       return State.Stack[State.Stack.size() - 2].NestedBlockIndent;
     if (Current.MatchingParen &&
@@ -1304,6 +1307,9 @@ void ContinuationIndenter::moveStatePastScopeOpener(LineState &State,
                                         State.Stack.back().NestedBlockIndent);
   if (Current.isOneOf(tok::l_brace, TT_ArrayInitializerLSquare) ||
       opensProtoMessageField(Current, Style)) {
+    if (Current.is(tok::l_brace) && Current.is(TT_DictLiteral)) {
+      NewIndent = State.Stack.back().LastSpace + Style.ContinuationIndentWidth;
+    } else
     if (Current.opensBlockOrBlockTypeList(Style)) {
       NewIndent = Style.IndentWidth +
                   std::min(State.Column, State.Stack.back().NestedBlockIndent);
