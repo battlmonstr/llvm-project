@@ -888,6 +888,7 @@ unsigned ContinuationIndenter::addTokenOnNewLine(LineState &State,
       !PreviousNonComment->isOneOf(
           TT_BinaryOperator, TT_FunctionAnnotationRParen, TT_JavaAnnotation,
           TT_LeadingJavaAnnotation) &&
+      !Current.isStringLiteral() &&
       Current.isNot(TT_BinaryOperator) && !PreviousNonComment->opensScope())
     State.Stack.back().BreakBeforeParameter = true;
 
