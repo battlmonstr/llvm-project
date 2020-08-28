@@ -617,14 +617,9 @@ void ContinuationIndenter::addTokenOnCurrentLine(LineState &State, bool DryRun,
 
   if (Current.is(TT_SelectorName) &&
       !State.Stack.back().ObjCSelectorNameFound) {
-    unsigned MinIndent =
-        std::max(State.FirstIndent + Style.ContinuationIndentWidth,
-                 State.Stack.back().Indent);
     unsigned FirstColonPos = State.Column + Spaces + Current.ColumnWidth;
     if (Current.LongestObjCSelectorName == 0)
       State.Stack.back().AlignColons = false;
-    else if (MinIndent + Current.LongestObjCSelectorName > FirstColonPos)
-      State.Stack.back().ColonPos = MinIndent + Current.LongestObjCSelectorName;
     else
       State.Stack.back().ColonPos = FirstColonPos;
   }
@@ -814,9 +809,6 @@ unsigned ContinuationIndenter::addTokenOnNewLine(LineState &State,
             std::max(NextNonComment->LongestObjCSelectorName,
                      NextNonComment->ColumnWidth);
       }
-    } else if (State.Stack.back().AlignColons &&
-               State.Stack.back().ColonPos <= NextNonComment->ColumnWidth) {
-      State.Stack.back().ColonPos = State.Column + NextNonComment->ColumnWidth;
     }
   } else if (PreviousNonComment && PreviousNonComment->is(tok::colon) &&
              PreviousNonComment->isOneOf(TT_ObjCMethodExpr, TT_DictLiteral)) {
