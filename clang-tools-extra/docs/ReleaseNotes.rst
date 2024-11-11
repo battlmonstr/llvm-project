@@ -209,6 +209,12 @@ New checks
   Detects variables and functions that can be marked as static or moved into
   an anonymous namespace to enforce internal linkage.
 
+- New :doc:`misc-use-prefix-increment
+  <clang-tidy/checks/misc/use-prefix-increment>` check.
+
+  Replaces ``i++`` with ``++i`` (``i--`` with ``--i``) if postfix semantics is not needed.
+  See <https://google.github.io/styleguide/cppguide.html#Preincrement_and_Predecrement>
+
 - New :doc:`modernize-min-max-use-initializer-list
   <clang-tidy/checks/modernize/min-max-use-initializer-list>` check.
 
